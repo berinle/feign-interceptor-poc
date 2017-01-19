@@ -15,8 +15,6 @@ public class HelloAppConfig extends WebMvcConfigurerAdapter {
 
   @Bean
   public RequestInterceptor requestIdFeignInterceptor() {
-    //ideally, want to read this from the current request header
-    // i.e. template.header("x-request-id", request.getHeader("x-request-id")
-    return template -> template.header("x-request-id", "");
+    return new RequestIdFeignInterceptor();
   }
 }
