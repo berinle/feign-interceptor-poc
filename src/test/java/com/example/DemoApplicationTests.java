@@ -11,11 +11,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.UUID;
+
 import static org.junit.Assert.assertEquals;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"logging.level=INFO"})
+@SpringBootTest(webEnvironment = DEFINED_PORT, properties = {"logging.level=INFO", "server.port=8080"})
 public class DemoApplicationTests {
 
     @Autowired
@@ -38,4 +40,12 @@ public class DemoApplicationTests {
 	 assertEquals("hello", client.hello());
   }
 
+  @Test
+  public void test_client_through_controller() throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("x-request-id", UUID.randomUUID().toString());
+    HttpEntity<String> entity = new HttpEntity<>(null, headers);
+    ResponseEntity<String> response = restTemplate.exchange("/client", HttpMethod.GET, entity, String.class);
+    assertEquals("hello", response.getBody());
+  }
 }
